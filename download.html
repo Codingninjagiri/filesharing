@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Download File</title>
+</head>
+<body>
+  <h2>Your Download will start shortly</h2>
+  <p id="countdown"></p>
+  <button id="downloadButton" style="display: none;" onclick="startDownload()">Download File</button>
+
+  <script>
+    // Parse fileID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const fileID = urlParams.get("id");
+
+    if (!fileID) {
+      document.body.innerHTML = "<h3>Invalid link!</h3>";
+    } else {
+      startCountdown(30);
+    }
+
+    function startCountdown(seconds) {
+      let countdown = seconds;
+      const countdownDisplay = document.getElementById("countdown");
+      const downloadButton = document.getElementById("downloadButton");
+
+      const interval = setInterval(() => {
+        countdownDisplay.textContent = `Please wait ${countdown} seconds to download...`;
+        countdown--;
+
+        if (countdown < 0) {
+          clearInterval(interval);
+          countdownDisplay.textContent = "You can now download the file.";
+          downloadButton.style.display = "inline";
+        }
+      }, 1000);
+    }
+
+    function startDownload() {
+      const downloadUrl = `/api/download/${fileID}`;
+      window.location.href = downloadUrl;
+    }
+  </script>
+</body>
+</html>
