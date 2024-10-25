@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload File</title>
+</head>
+<body>
+  <h2>Upload a File to Share</h2>
+  <input type="file" id="fileInput">
+  <button onclick="uploadFile()">Upload</button>
+  <p id="linkSection" style="display: none;">
+    <input type="text" id="fileLink" readonly>
+    <button onclick="copyLink()">Copy Link</button>
+  </p>
+
+  <script>
+    async function uploadFile() {
+      const fileInput = document.getElementById("fileInput");
+      const file = fileInput.files[0];
+      if (!file) return alert("Please select a file");
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // Display the generated link
+        const fileLink = `${window.location.origin}/download.html?id=${data.fileID}`;
+        document.getElementById("fileLink").value = fileLink;
+        document.getElementById("linkSection").style.display = "block";
+      } else {
+        alert("File upload failed");
+      }
+    }
+
+    function copyLink() {
+      const fileLinkInput = document.getElementById("fileLink");
+      fileLinkInput.select();
+      document.execCommand("copy");
+      alert("Link copied to clipboard!");
+    }
+  </script>
+</body>
+</html>
